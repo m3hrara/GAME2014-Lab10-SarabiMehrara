@@ -1,5 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using Cinemachine;
 using UnityEngine;
 
 public class PlayerBehaviour : MonoBehaviour
@@ -23,7 +25,21 @@ public class PlayerBehaviour : MonoBehaviour
     public PlayerAnimationState state;
 
     [Header("Sound FX")] 
+    public List<AudioSource> audioSources;
     public AudioSource jumpSound;
+    public AudioSource hitSound;
+
+    [Header("Dust Trail")] 
+    public ParticleSystem dustTrail;
+    public Color dustTrailColour;
+
+    [Header("Screen Shake Properties")] 
+    public CinemachineVirtualCamera virtualCamera;
+    public CinemachineBasicMultiChannelPerlin perlin;
+    public float shakeIntensity;
+    public float shakeDuration;
+    public float shakeTimer;
+    public bool isCameraShaking;
 
     private Rigidbody2D rigidbody;
     private Animator animatorController;
@@ -31,9 +47,20 @@ public class PlayerBehaviour : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        isCameraShaking = false;
+        shakeTimer = shakeDuration;
+
         rigidbody = GetComponent<Rigidbody2D>();
         animatorController = GetComponent<Animator>();
-        jumpSound = GetComponent<AudioSource>();
+
+        // Assign Sounds
+        audioSources = GetComponents<AudioSource>().ToList();
+        jumpSound = audioSources[0];
+        hitSound = audioSources[1];
+
+        dustTrail = GetComponentInChildren<ParticleSystem>();
+
+        perlin = virtualCamera.GetCinemachineComponent<CinemachineBasicMultiChannelPerlin>();
     }
 
     // Update is called once per frame
@@ -41,6 +68,18 @@ public class PlayerBehaviour : MonoBehaviour
     {
         Move();
         CheckIfGrounded();
+
+        // Camera Shake Control
+        if (isCameraShaking)
+        {
+            shakeTimer -= Time.deltaTime;
+            if (shakeTimer <= 0.0f) // timed out
+            {
+                perlin.m_AmplitudeGain = 0.0f;
+                shakeTimer = shakeDuration;
+                isCameraShaking = false;
+            }
+        }
     }
 
     private void Move()
@@ -66,6 +105,7 @@ public class PlayerBehaviour : MonoBehaviour
                 x = FlipAnimation(x);
                 animatorController.SetInteger("AnimationState", (int) PlayerAnimationState.RUN); // RUN State
                 state = PlayerAnimationState.RUN;
+                CreateDustTrail();
             }
             else
             {
@@ -96,6 +136,7 @@ public class PlayerBehaviour : MonoBehaviour
 
                 rigidbody.AddForce(new Vector2(horizontalMoveForce, 0.0f) * mass);
             }
+            CreateDustTrail();
         }
 
     }
@@ -116,6 +157,18 @@ public class PlayerBehaviour : MonoBehaviour
         return x;
     }
 
+    private void CreateDustTrail()
+    {
+        dustTrail.GetComponent<Renderer>().material.SetColor("_Color", dustTrailColour);
+        dustTrail.Play();
+    }
+
+    private void ShakeCamera()
+    {
+        perlin.m_AmplitudeGain = shakeIntensity;
+        isCameraShaking = true;
+    }
+
     // EVENTS
 
     private void OnCollisionEnter2D(Collision2D other)
@@ -133,6 +186,17 @@ public class PlayerBehaviour : MonoBehaviour
             transform.SetParent(null);
         }
     }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.gameObject.CompareTag("Bullet"))
+        {
+            hitSound.Play();
+            ShakeCamera();
+        }
+    }
+
+   
 
     // UTILITIES
 

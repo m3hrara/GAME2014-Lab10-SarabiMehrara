@@ -27,6 +27,9 @@ public class LOS : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        collidesWith = other;
+        if (!other.gameObject.CompareTag("Bullet"))
+        {
+            collidesWith = other;
+        }
     }
 }

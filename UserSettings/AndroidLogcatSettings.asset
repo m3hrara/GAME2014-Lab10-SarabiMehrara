@@ -2,8 +2,8 @@
     "m_SelectedDeviceId": "emulator-5554",
     "m_SelectedPackage": {
         "deviceId": "emulator-5554",
-        "name": "com.GeorgeBrownCollege.GAME2014F2021Lab9",
-        "processId": 3102,
+        "name": "com.GeorgeBrownCollege.GAME2014F2021Lab10",
+        "processId": 3683,
         "exited": false
     },
     "m_SelectedPriority": 0,
@@ -12,12 +12,24 @@
             "deviceId": "emulator-5554",
             "name": "com.GeorgeBrownCollege.GAME2014F2021Lab8",
             "processId": 4940,
-            "exited": false
+            "exited": true
         },
         {
             "deviceId": "emulator-5554",
             "name": "com.GeorgeBrownCollege.GAME2014F2021Lab9",
-            "processId": 3102,
+            "processId": 4119,
+            "exited": true
+        },
+        {
+            "deviceId": "emulator-5554",
+            "name": "com.ldmnq.launcher3",
+            "processId": 1762,
+            "exited": false
+        },
+        {
+            "deviceId": "emulator-5554",
+            "name": "com.GeorgeBrownCollege.GAME2014F2021Lab10",
+            "processId": 3683,
             "exited": false
         },
         {
@@ -36,6 +48,12 @@
             "deviceId": "ce07160715c92b1302",
             "name": "com.GeorgeBrownCollege.GAME2014F2021Lab8",
             "processId": 30921,
+            "exited": false
+        },
+        {
+            "deviceId": "1WMHH830560525",
+            "name": "com.GeorgeBrownCollege.GAME2014F2021Lab10",
+            "processId": 1388,
             "exited": false
         }
     ],
